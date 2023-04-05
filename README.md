@@ -19,7 +19,7 @@ A)
 Please reach out to the author of this project for citations and background research related to the simulation assumptions.
 
 ## 2. Technologies and Dependencies
-This project utilizes Python 3.9.13 (Aug '22; iPython 7.31.1)   
+This project utilizes Python 3.9.13 (Aug '22; iPython 7.31.1)  
 
 The following packages are required for the code to run:
 
