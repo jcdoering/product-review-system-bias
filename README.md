@@ -1,5 +1,5 @@
 # Simulating Network-level Bias in Online Consumer Review Systems
-By: Jeff Doering
+Author: Jeff Doering
 Date: Apr 2023
 
 ## Table of Contents
