@@ -1,5 +1,6 @@
 # Simulating Network-level Bias in Online Consumer Review Systems
 Author: Jeff Doering  
+
 Date: Apr 2023
 
 ## Table of Contents
@@ -12,6 +13,7 @@ Date: Apr 2023
 This project is part of a doctoral (Ph.D.) research at the University of Manitoba in Winnipeg, Manitoba, Canada by Jeffrey Doering (Ph.D. Candidate). The purpose of this simulation is to evaluate the magnitude and direction of cumulative influence from individual online consumer reviews across the entire system of a product reviews for a product category. 
 
 The assumptions underlying this simulation are:  
+
 A) 
 
 Please reach out to the author of this project for citations and background research related to the simulation assumptions.
