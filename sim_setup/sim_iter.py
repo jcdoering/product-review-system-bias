@@ -79,7 +79,14 @@ class review_sim:
         for i in range(1, self.n_prods + 1):
             prob_col_names.append("product_%s" % i)
         self.prob_data = pd.DataFrame(columns = prob_col_names)
-    
+        
+        # Object to save simulation metadata
+        meta_data = pd.DataFrame(columns = ['num_prods', 'num_steps',
+                                 'rev_bias', 'count_bias', 'prod_qual', 
+                                 'initial_lead_product', 'early_lead_product',
+                                 'mid_lead_product', 'end_lead_product'])
+        self.meta_data = meta_data
+
     # Instantiate step-wise simulation
     def step(self):
 
@@ -92,15 +99,14 @@ class review_sim:
             if step_counter == 0:     # Accounting for first sim step
                 
                 # Choose product based on product quality scores
-                prod_choice = numpy.random.choice(numpy.arange(0, self.n_prods), 
-                                   p=[x[1] for x in self.qual_vals])
+                prod_choice = numpy.random.choice(numpy.arange\
+                                   (0, self.n_prods), p=[x[1] for x in self.qual_vals])
                 prod_choice_name = self.qual_vals[prod_choice][0]
 
                 # Save new review to reviews dataframe
                 new_row = {"step": step_counter + 1,
                            "%s" % prod_choice_name: random.randrange(1, 5)}
-                self.reviews_data = self.reviews_data.append(new_row, 
-                                                             ignore_index=True)
+                self.reviews_data = self.reviews_data.append(new_row, ignore_index=True)
 
                 # Save new review probabilities to reviews dataframe
                 new_row_prob = [step_counter + 1]
@@ -113,16 +119,14 @@ class review_sim:
                 # Collect info on current review counts
                 rev_counts = []
                 for product in range(1, self.n_prods + 1):
-                    rev_counts.append(len(self.reviews_data) - \
-                                      self.reviews_data['product_%s' % \
-                                      product].isna().sum())
+                    rev_counts.append(len(self.reviews_data)\
+                                      - self.reviews_data['product_%s' % product].isna().sum())
                 rev_counts = softmax(rev_counts)
 
                 # Collect info on current review valences
                 avg_scores = []
                 for product in range(1, self.n_prods + 1):
-                    avg_scores.append(numpy.mean(self.reviews_data\
-                                                 ['product_%s' % product]))
+                    avg_scores.append(numpy.mean(self.reviews_data['product_%s' % product]))
                 avg_scores = numpy.nan_to_num(avg_scores).tolist()
                 avg_scores = softmax(avg_scores)
 
@@ -139,15 +143,13 @@ class review_sim:
                 # Choose new product to purchase, and save data
                 prob_tuples = []
                 for i in range(0, self.n_prods):
-                    prob_tuples.append(tuple(["product_%s" % str(i + 1), 
-                                              new_prob_scores[i]]))
+                    prob_tuples.append(tuple(["product_%s" % str(i + 1), new_prob_scores[i]]))
                 prod_choice = numpy.random.choice(numpy.arange\
                            (0, self.n_prods), p=[x[1] for x in prob_tuples])
                 prod_choice_name = prob_tuples[prod_choice][0]
                 new_row = {"step": step_counter + 1,
                            "%s" % prod_choice_name: random.randrange(1, 5)}
-                self.reviews_data = self.reviews_data.append(new_row, 
-                                                             ignore_index=True)
+                self.reviews_data = self.reviews_data.append(new_row, ignore_index=True)
                 
                 # Save new review probabilities to reviews dataframe
                 new_row_prob = [step_counter + 1]
@@ -158,5 +160,44 @@ class review_sim:
             # Progress counter and finalize
             step_counter += 1
             
+        # Some analyses to summarize the simulations
+        exp_data = self.prob_data.reset_index(drop=True)
+        exp_data = exp_data.apply(pd.to_numeric)
+        exp_data.drop(columns = 'step', inplace = True)
+        exp_data['max'] = exp_data.idxmax(axis = 1)
+
+        # Grab first product with top purchase probability
+        initial_lead = exp_data['max'][0]
+
+        # Find early leadout product (at step 5)
+        early_lead = exp_data['max'][4]
+
+        # Grab final product with top purchase probability
+        mid_lead = exp_data['max'][round(len(exp_data)/2)]
+
+        # Grab final product with top purchase probability
+        end_lead = exp_data['max'][len(exp_data) - 1]
+
+        # Save simulation metadata
+        new_meta = {'num_prods': self.n_prods, 
+                    'num_steps': self.n_revs,     
+                    'rev_bias': self.rev_bias, 
+                    'count_bias': self.count_bias, 
+                    'prod_qual': self.prod_qual, 
+                    'initial_lead_product': initial_lead, 
+                    'early_lead_product': early_lead, 
+                    'mid_lead_product': mid_lead, 
+                    'end_lead_product': end_lead}
+        self.meta_data = self.meta_data.append(pd.DataFrame(pd.DataFrame([new_meta],
+                                               columns = self.meta_data.columns)))
+        
+        # Return all critical datasets             
         return self.reviews_data
         return self.prob_data
+        return self.meta_data                                                        
+
+# Execute test of simulations
+n_prods = 10
+n_revs = 100
+test_sim = review_sim(n_prods = n_prods, n_revs = n_revs, rev_bias = 1, count_bias = 1, prod_qual = 1)
+test_sim.step()

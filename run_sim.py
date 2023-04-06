@@ -11,7 +11,6 @@ University of Manitoba in the department of Electrical and Computer Engineering
 """
 
 # Import required packages
-import pandas as pd
 import sim_setup.sim_iter
 
 # Set values for key simulation variables
@@ -29,5 +28,3 @@ test_sim = sim_setup.sim_iter.review_sim(n_prods = n_prods,
                                          prod_qual = prod_qual)
 test_sim.step()
 print(test_sim.reviews_data)
-
-# Then create, save, print output and feedback
