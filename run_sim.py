@@ -12,14 +12,22 @@ University of Manitoba in the department of Electrical and Computer Engineering
 
 # Import required packages
 import pandas as pd
-import random
 import sim_setup.sim_iter
 
 # Set values for key simulation variables
-n_market = 10
-n_purchases = 10
+n_prods = 5
+n_revs = 10
+rev_bias = 1
+count_bias = 1
+prod_qual = 1
 
-# And run simulation
-
+# Execute test of simulations
+test_sim = sim_setup.sim_iter.review_sim(n_prods = n_prods, 
+                                         n_revs = n_revs,
+                                         rev_bias = rev_bias, 
+                                         count_bias = count_bias, 
+                                         prod_qual = prod_qual)
+test_sim.step()
+print(test_sim.reviews_data)
 
 # Then create, save, print output and feedback
